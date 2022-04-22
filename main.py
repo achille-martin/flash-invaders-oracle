@@ -46,7 +46,7 @@ from geopy.distance import distance as geo_dist
 #To be modified by user
 def setUserParams():
     global gpx_file_path, proximity_scale_size, min_distance_to_target, max_distance_to_target, proximity_cut_off_percentage, position_update_period
-    gpx_file_path = '/storage/emulated/0/qpython/resources/flash_invaders/space_invaders_test_layer.xml'
+    gpx_file_path = '/storage/emulated/0/qpython/scripts3/flash-invaders-oracle/resources/space_invaders_demo_paris.gpx'
     proximity_scale_size = 10 # number of points on the proximity scale
     min_distance_to_target = 50 # min detectable distance (in m) to target
     max_distance_to_target = 1000 # max detectable distance (in m) to target
