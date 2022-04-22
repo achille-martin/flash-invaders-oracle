@@ -1,0 +1,2 @@
+# Ignore temp file created whrn executing script in qpython3L
+.last_tmp.py
