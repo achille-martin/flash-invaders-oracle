@@ -45,13 +45,15 @@ from geopy.distance import distance as geo_dist
 
 #To be modified by user
 def setUserParams():
-    global gpx_file_path, proximity_scale_size, min_distance_to_target, max_distance_to_target, proximity_cut_off_percentage, position_update_period
+    global gpx_file_path, proximity_scale_size, min_distance_to_target, max_distance_to_target, proximity_cut_off_percentage, position_update_period, gps_connection_wait_ms, gps_connection_max_attempt
     gpx_file_path = '/storage/emulated/0/qpython/scripts3/flash-invaders-oracle/resources/space_invaders_demo_paris.gpx'
     proximity_scale_size = 10 # number of points on the proximity scale
     min_distance_to_target = 50 # min detectable distance (in m) to target
     max_distance_to_target = 1000 # max detectable distance (in m) to target
     proximity_cut_off_percentage = 25 # display waypoints whose distances are within the lowest x%
     position_update_period = 5.0 # refresh position every x seconds
+    gps_connection_wait_ms = 1000 # Time to wait for event response while trying to connect to GPS (in ms) 
+    gps_connection_max_attempt = 5 # Max number of attempts to connect to the GPS 
     
 #Main
 def main():
@@ -115,8 +117,25 @@ def generateProximityScale(size, min_d, max_d):
     return proximity_scale_list
 
 def getCurrentLocation():
+    global gps_connection_wait_ms
     droid.startLocating() # access gps
-    event = droid.eventWait(500).result # get event
+    event_wait_ms = gps_connection_wait_ms 
+    gps_connection_attempt = 0
+    while gps_connection_attempt < gps_connection_max_attempt:
+        try:
+            event = droid.eventWait(event_wait_ms).result
+            if event:
+                # event is not empty so gps data has been collected
+                break
+            else:
+                gps_connection_attempt+=1
+                event_wait_ms+=gps_connection_wait_ms
+        except Exception as e:
+            print('Error connecting to GPS: ' + str(e)) 
+            gps_connection_attempt+=1
+            event_wait_ms+=gps_connection_wait_ms
+    if gps_connection_attempt == gps_connection_max_attempt:
+        raise Exception('Max number of retries to connect to GPS exceeded.')
     if event['name'] == "location":
         # print(list(event.keys()))
         # print(event)
