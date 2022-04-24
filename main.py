@@ -18,7 +18,7 @@
 # Open qpython3 app
 # Open Qpypl
 # Open the console
-# Enter: pip3 install -r /storage/emulated/0/qpython/scripts3/flash-invaders-oracle/requirements.txt
+# Enter: pip3 install -r <project_path>/requirements.txt
 
 #Default packages
 import pip
@@ -38,7 +38,6 @@ except Exception as e:
     raise Exception('An error occured while importing the third-party packages, please import the packages with requirements.txt')
     
 def setUserParams():
-    logger.debug('Main::setUserParams - entering function...')
     global gpx_file_path, \
            proximity_scale_size, \
            min_distance_to_target, \
@@ -46,9 +45,10 @@ def setUserParams():
            proximity_cut_off_percentage, \
            position_update_period, \
            gps_connection_wait_ms, \
-           gps_connection_max_attempt
-    gpx_file_path = '/storage/emulated/0/qpython/scripts3/flash-invaders-oracle/resources/space_invaders_demo_paris.gpx'
-    logger.debug('Main::setUserParams - gpx file path used is = ' + str(gpx_file_path))
+           gps_connection_max_attempt, \
+           project_path
+    project_path = '/storage/emulated/0/qpython/scripts3/flash-invaders-oracle/'
+    gpx_file_path = project_path + 'resources/space_invaders_demo_paris.gpx'
     proximity_scale_size = 10 # number of points on the proximity scale
     min_distance_to_target = 50 # min detectable distance (in m) to target
     max_distance_to_target = 1000 # max detectable distance (in m) to target
@@ -56,8 +56,6 @@ def setUserParams():
     position_update_period = 5.0 # refresh position every x seconds
     gps_connection_wait_ms = 1000 # Time to wait for event response while trying to connect to GPS (in ms) 
     gps_connection_max_attempt = 5 # Max number of attempts to connect to the GPS 
-    logger.info('Main::setUserParams - all user params set')
-    logger.debug('Main::setUserParams - ...exiting function')
 
 def main():
     
@@ -212,18 +210,19 @@ def evaluateProximity(ref_list, distance):
 #Entry point
 if __name__=="__main__":
     
+    # Setting the params defined by the user
+    setUserParams()
+
     # Instantiating the logger
-    global logger
+    global logger, project_path
     logger = log_tool.getLogger(__name__)
     logging_level = log_tool.INFO
     logger.setLevel(logging_level)
-    file_handler = log_tool.FileHandler('/storage/emulated/0/qpython/scripts3/flash-invaders-oracle/main.log', 'w+')
+    file_handler = log_tool.FileHandler(project_path + 'main.log', 'w+')
     formatter = log_tool.Formatter('[%(asctime)s][%(levelname)s] - %(message)s')
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
-    
-    # Setting the params defined by the user
-    setUserParams()
+    logger.info('Main::Entrypoint - User params and logger set')
     
     # Instantiating Android() service (running on sl4a)
     global droid
