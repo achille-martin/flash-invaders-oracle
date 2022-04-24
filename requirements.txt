@@ -1,0 +1,5 @@
+# Standard packages
+
+# Third-party packages
+gpxpy
+geopy
