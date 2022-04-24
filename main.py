@@ -39,7 +39,14 @@ except Exception as e:
     
 def setUserParams():
     logger.debug('Main::setUserParams - entering function...')
-    global gpx_file_path, proximity_scale_size, min_distance_to_target, max_distance_to_target, proximity_cut_off_percentage, position_update_period, gps_connection_wait_ms, gps_connection_max_attempt
+    global gpx_file_path, \
+           proximity_scale_size, \
+           min_distance_to_target, \
+           max_distance_to_target, \
+           proximity_cut_off_percentage, \
+           position_update_period, \
+           gps_connection_wait_ms, \
+           gps_connection_max_attempt
     gpx_file_path = '/storage/emulated/0/qpython/scripts3/flash-invaders-oracle/resources/space_invaders_demo_paris.gpx'
     logger.debug('Main::setUserParams - gpx file path used is = ' + str(gpx_file_path))
     proximity_scale_size = 10 # number of points on the proximity scale
@@ -95,9 +102,9 @@ def main():
         logger.debug('Main::main - The proximity display list is (distance in m) : ' + str(proximity_display_list))
         logger.debug('Main::main - The min distance (distance in m) is = ' + str(min_dist))
         if proximity_display_list:
-            print('The closest targets are within ' + str(proximity_display_list) + ' m from you')
+            print('The closest targets are located within ' + str(proximity_display_list) + ' m from you')
         else:
-            print('The closest targets are over ' + str(min_dist) + ' m from you')
+            print('The closest targets are located over ' + str(min_dist) + ' m from you')
 
         time.sleep(position_update_period - ((time.time() - start_time) % position_update_period)) 
 
@@ -133,11 +140,23 @@ def getCurrentLocation():
             else:
                 gps_connection_attempt+=1
                 event_wait_ms+=gps_connection_wait_ms
-                logger.warn('Main::getCurrentLocation - could not collect android event. Connection attempt ' + str(gps_connection_attempt) + ' of ' + str(gps_connection_max_attempt) + '. Increasing event wait time to ' + str(event_wait_ms) + ' ms')
+                logger.warn('Main::getCurrentLocation - could not collect android event. Connection attempt ' 
+                            + str(gps_connection_attempt)
+                            + ' of '
+                            + str(gps_connection_max_attempt)
+                            + '. Increasing event wait time to '
+                            + str(event_wait_ms) 
+                            + ' ms')
         except Exception as e:
             gps_connection_attempt+=1
             event_wait_ms+=gps_connection_wait_ms
-            logger.warn('Main::getCurrentLocation - Exception caught while trying to connect to the gps. Connection attempt ' + str(gps_connection_attempt) + ' of ' + str(gps_connection_max_attempt) + '. Increasing event wait time to ' + str(event_wait_ms) + ' ms')
+            logger.warn('Main::getCurrentLocation - Exception caught while trying to connect to the gps. Connection attempt ' 
+                        + str(gps_connection_attempt) 
+                        + ' of ' 
+                        + str(gps_connection_max_attempt) 
+                        + '. Increasing event wait time to ' 
+                        + str(event_wait_ms) 
+                        + ' ms')
     if gps_connection_attempt == gps_connection_max_attempt:
         logger.exception('Main::getCurrentLocation - Connection to gps failed. Exception has been caught: Max number or retries to connect to GPS exceeded.')
         raise Exception('Max number of retries to connect to GPS exceeded.')
