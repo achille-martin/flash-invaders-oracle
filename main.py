@@ -46,7 +46,8 @@ def setUserParams():
            position_update_period, \
            gps_connection_wait_ms, \
            gps_connection_max_attempt, \
-           project_path
+           project_path, \
+           logging_level_user
     project_path = '/storage/emulated/0/qpython/scripts3/flash-invaders-oracle/'
     gpx_file_path = project_path + 'resources/space_invaders_demo_paris.gpx'
     proximity_scale_size = 10 # number of points on the proximity scale
@@ -56,6 +57,7 @@ def setUserParams():
     position_update_period = 5.0 # refresh position every x seconds
     gps_connection_wait_ms = 1000 # Time to wait for event response while trying to connect to GPS (in ms) 
     gps_connection_max_attempt = 5 # Max number of attempts to connect to the GPS 
+    logging_level_user = 'INFO'
 
 def main():
     
@@ -214,9 +216,9 @@ if __name__=="__main__":
     setUserParams()
 
     # Instantiating the logger
-    global logger, project_path
+    global logger, project_path, logging_level_user
     logger = log_tool.getLogger(__name__)
-    logging_level = log_tool.INFO
+    logging_level = logging_level_user
     logger.setLevel(logging_level)
     file_handler = log_tool.FileHandler(project_path + 'main.log', 'w+')
     formatter = log_tool.Formatter('[%(asctime)s][%(levelname)s] - %(message)s')
