@@ -135,7 +135,10 @@ def getCurrentLocation():
             logger.debug('Main::getCurrentLocation - listening to android events')
             event = droid.eventWait(event_wait_ms).result
             if event:
-                logger.debug('Main::getCurrentLocation - collected android event at attempt ' + str(gps_connection_attempt) + ' out of ' + str(gps_connection_max_attempt))
+                logger.debug('Main::getCurrentLocation - collected android event at attempt ' 
+                             + str(gps_connection_attempt)
+                             + ' out of ' 
+                             + str(gps_connection_max_attempt))
                 break
             else:
                 gps_connection_attempt+=1
@@ -158,7 +161,8 @@ def getCurrentLocation():
                         + str(event_wait_ms) 
                         + ' ms')
     if gps_connection_attempt == gps_connection_max_attempt:
-        logger.exception('Main::getCurrentLocation - Connection to gps failed. Exception has been caught: Max number or retries to connect to GPS exceeded.')
+        logger.exception('Main::getCurrentLocation - Connection to gps failed. \
+                         Exception has been caught: Max number or retries to connect to GPS exceeded.')
         raise Exception('Max number of retries to connect to GPS exceeded.')
     if event['name'] == "location":
         logger.debug('Main::getCurrentLocation - the content of the event is = ' + str(event))
