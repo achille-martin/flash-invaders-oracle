@@ -1,29 +1,6 @@
-#-*-coding:utf8;-*-
-#qpy:console
-
-#Requirements:
-#Allow location permission
-#Export gpx data from open Street map (export data from Webpage)
-#Note: gpx data as .gpx is the entry point (or define a set format)
-
-#Limitations
-# how to warn user not looking at phone? 
-# how to know which waypts have already been visited? (non-essential feature) 
-# how to add logs and debugger
-# how to add waypoints (non-essential feature)
-# how to make user param definition from (yaml) file (non-essential feature)
-# how to handle issues? What if gpx file empty or corrupted? 
-
-# Install packages
-# Open qpython3 app
-# Open Qpypl
-# Open the console
-# Enter: pip3 install -r <project_path>/requirements.txt
-
 #Default packages
 import pip
 import importlib.util
-import androidhelper
 from bisect import bisect_left
 import math
 import time
@@ -34,6 +11,7 @@ import logging as log_tool
 try:
     import gpxpy
     from geopy.distance import distance as geo_dist
+    import termux
 except Exception as e:
     raise Exception('An error occured while importing the third-party packages, please import the packages with requirements.txt')
     
@@ -44,18 +22,16 @@ def setUserParams():
            max_distance_to_target, \
            proximity_cut_off_percentage, \
            position_update_period, \
-           gps_connection_wait_ms, \
            gps_connection_max_attempt, \
            project_path, \
            logging_level_user
-    project_path = '/storage/emulated/0/qpython/scripts3/flash-invaders-oracle/'
+    project_path = '/storage/emulated/0/Python/projects/flash-invaders-oracle/'
     gpx_file_path = project_path + 'resources/space_invaders_demo_paris.gpx'
     proximity_scale_size = 10 # number of points on the proximity scale
     min_distance_to_target = 50 # min detectable distance (in m) to target
     max_distance_to_target = 1000 # max detectable distance (in m) to target
     proximity_cut_off_percentage = 25 # display waypoints whose distances are within the lowest x%
-    position_update_period = 5.0 # refresh position every x seconds
-    gps_connection_wait_ms = 1000 # Time to wait for event response while trying to connect to GPS (in ms) 
+    position_update_period = 10.0 # refresh position every x seconds
     gps_connection_max_attempt = 5 # Max number of attempts to connect to the GPS 
     logging_level_user = 'INFO'
 
@@ -126,14 +102,11 @@ def generateProximityScale(size, min_d, max_d):
 
 def getCurrentLocation():
     logger.debug('Main::getCurrentLocation - entering function...')
-    global gps_connection_wait_ms
-    droid.startLocating() # access gps
-    event_wait_ms = gps_connection_wait_ms 
     gps_connection_attempt = 0
     while gps_connection_attempt < gps_connection_max_attempt:
         try:
-            logger.debug('Main::getCurrentLocation - listening to android events')
-            event = droid.eventWait(event_wait_ms).result
+            logger.debug('Main::getCurrentLocation - listening to android events via termux API')
+            event = termux.API.location('gps', 'once')
             if event:
                 logger.debug('Main::getCurrentLocation - collected android event at attempt ' 
                              + str(gps_connection_attempt)
@@ -142,37 +115,27 @@ def getCurrentLocation():
                 break
             else:
                 gps_connection_attempt+=1
-                event_wait_ms+=gps_connection_wait_ms
-                logger.warn('Main::getCurrentLocation - could not collect android event. Connection attempt ' 
+                logger.warning('Main::getCurrentLocation - could not collect android event. Connection attempt ' 
                             + str(gps_connection_attempt)
                             + ' of '
-                            + str(gps_connection_max_attempt)
-                            + '. Increasing event wait time to '
-                            + str(event_wait_ms) 
-                            + ' ms')
+                            + str(gps_connection_max_attempt))
         except Exception as e:
             gps_connection_attempt+=1
-            event_wait_ms+=gps_connection_wait_ms
-            logger.warn('Main::getCurrentLocation - Exception caught while trying to connect to the gps. Connection attempt ' 
+            logger.warning('Main::getCurrentLocation - Exception caught while trying to connect to the gps. Connection attempt ' 
                         + str(gps_connection_attempt) 
                         + ' of ' 
-                        + str(gps_connection_max_attempt) 
-                        + '. Increasing event wait time to ' 
-                        + str(event_wait_ms) 
-                        + ' ms')
+                        + str(gps_connection_max_attempt))
     if gps_connection_attempt == gps_connection_max_attempt:
         logger.exception('Main::getCurrentLocation - Connection to gps failed. \
                          Exception has been caught: Max number or retries to connect to GPS exceeded.')
         raise Exception('Max number of retries to connect to GPS exceeded.')
-    if event['name'] == "location":
+    if event:
         logger.debug('Main::getCurrentLocation - the content of the event is = ' + str(event))
-        event_data=event['data']
-        values=list(event_data.values())
-        latitude = values[0]['latitude']
-        longitude = values[0]['longitude']
+        event_data=event[1]
+        latitude = event_data.get('latitude')
+        longitude = event_data.get('longitude')
         logger.debug('Main::getCurrentLocation - the latitude collected (in dd) is = ' + str(latitude))
         logger.debug('Main::getCurrentLocation - the longitude collected (in dd) is = ' + str(longitude))
-    droid.stopLocating() # close gps 
     logger.debug('Main::getCurrentLocation - ...exiting function')
     return [latitude, longitude]
 
@@ -225,10 +188,6 @@ if __name__=="__main__":
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     logger.info('Main::Entrypoint - User params and logger set')
-    
-    # Instantiating Android() service (running on sl4a)
-    global droid
-    droid = androidhelper.Android()
     
     # Calling the main function
     main() 
