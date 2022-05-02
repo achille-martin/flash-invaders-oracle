@@ -3,3 +3,4 @@
 # Third-party packages
 gpxpy
 geopy
+termux-api
