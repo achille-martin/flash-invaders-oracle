@@ -10,7 +10,7 @@ The prototype version of the app is aimed at being used with [Termux](https://gi
 
 To install Termux:
 * Go to phone settings -> Security -> unknown source installations -> toggle favourite browser (you download the apk from) and file manager if necessary
-* Open your browser -> go to [github releases for Termux](https://github.com/termux/termux-app) -> download latest version -> install the .apk
+* Open your browser -> go to [github releases for Termux](https://github.com/termux/termux-app/releases) -> download latest version -> install the .apk
 * Open the Termux app on Android
   * run `apt update`
   * run `apt upgrade`
