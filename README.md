@@ -1,6 +1,6 @@
 # flash-invaders-oracle
 
-This app is a modified version of the original and awesome Flash Invaders (https://space-invaders.com/flashinvaders/), making it easier to find ALL hidden mosaics.
+This app is a modified version of the original and awesome [Flash Invaders](https://space-invaders.com/flashinvaders/), making it easier to find ALL hidden mosaics.
 
 The concept can be extended to any street art, making you become a real hunter.
 
