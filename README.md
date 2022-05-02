@@ -48,7 +48,7 @@ The prototype version of the app is aimed at being used with [Termux](https://gi
 
 ### Install required python packages
 
-* In terminal, run `pkg install python` to obtain python in Termux
+* In terminal, run `pkg install python` to obtain python3 in Termux
 * In terminal, run `pip install -r <repo_path>/requirements.txt` where `<repo_path>` is `<project_path>/<repo_name>`
 
 ### Set extra permissions for the app
