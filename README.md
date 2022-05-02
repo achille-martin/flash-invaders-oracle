@@ -36,11 +36,11 @@ The prototype version of the app is aimed at being used with [Termux](https://gi
 * In the terminal, run `ssh -T git@github.com`
 * Confirm that you can authenticate to your Github account: you can now use `git clone <repo>`
 
-### Clone this repo
+### Clone the repo
 
 * In terminal, run `mkdir -p /storage/emulated/0/Python/projects`
 * In terminal, run `cd <project_path>` where `<project_path>` is `/storage/emulated/0/Python/projects`
-* In terminal, run `git clone git@github.com:achille-martin/flash-invaders-oracle.git`
+* In terminal, run `git clone git@github.com:achille-martin/<repo_name>.git`
 
 ### Setup Termux APIs (for access to Android tools and functionalities)
 
