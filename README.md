@@ -6,7 +6,7 @@ The concept can be extended to any street art, making you become a real hunter.
 
 ## Installation
 
-The prototype version of the app is aimed at being with Termux (Android Terminal Emulator): https://github.com/termux/termux-app
+The prototype version of the app is aimed at being used with Termux (Android Terminal Emulator): https://github.com/termux/termux-app
 
 To install Termux:
 * Go to phone settings -> Security -> unknown source installations -> toggle favourite browser (you download the apk from) and file manager if necessary
