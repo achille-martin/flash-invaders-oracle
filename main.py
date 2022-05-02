@@ -25,7 +25,7 @@ def setUserParams():
            gps_connection_max_attempt, \
            project_path, \
            logging_level_user
-    project_path = '/storage/emulated/0/qpython/scripts3/flash-invaders-oracle/'
+    project_path = '/storage/emulated/0/Python/projects/flash-invaders-oracle/'
     gpx_file_path = project_path + 'resources/space_invaders_demo_paris.gpx'
     proximity_scale_size = 10 # number of points on the proximity scale
     min_distance_to_target = 50 # min detectable distance (in m) to target
