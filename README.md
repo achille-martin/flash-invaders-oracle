@@ -45,6 +45,7 @@ The prototype version of the app is aimed at being used with [Termux](https://gi
 ### Setup Termux APIs (for access to Android tools and functionalities)
 
 * Install the [Termux:API app from Github](https://github.com/termux/termux-api/releases) -> download and install the .apk
+* In terminal, run `pkg install termux-api` to enable the api calls
 
 ### Setup python environment
 
