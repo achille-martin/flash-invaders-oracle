@@ -24,7 +24,7 @@ The prototype version of the app is aimed at being used with [Termux](https://gi
 ### Setup file access from Termux
 
 * In terminal, run `termux-setup-storage`
-* Install vim editor from terminal, run `pkg install vim`
+* (Optional) Install vim editor from terminal, run `pkg install vim`
 
 ### Setup SSH access (from remote to local)
 
@@ -46,10 +46,15 @@ The prototype version of the app is aimed at being used with [Termux](https://gi
 
 * Install the [Termux:API app from Github](https://github.com/termux/termux-api/releases) -> download and install the .apk
 
-### Install required python packages
+### Setup python environment
 
 * In terminal, run `pkg install python` to obtain python3 in Termux
-* In terminal, run `pip install -r <repo_path>/requirements.txt` where `<repo_path>` is `<project_path>/<repo_name>`
+* In terminal, run `pip install virtualenv` to obtain the virtual environment tool (safer and more reliable)
+* In terminal, run `mkdir -p ~/venv` to create a structure for the various virtual environments (only home directory available for Termux)
+* In terminal, run `cd ~/venv` then `virtualenv <repo_name>-venv -p python` to initialise the virtual environment
+* In terminal, run `source ~/venv/<repo_name>-venv/bin/activate` every time you want to enter the virtual environment
+* In terminal, run `pip install -r <repo_path>/requirements.txt` where `<repo_path>` is `<project_path>/<repo_name>`, to install the python package dependencies
+* In terminal, run `deactivate` to exit the current virtual environment
 
 ### Set extra permissions for the app
 
@@ -72,7 +77,9 @@ To push changes to a repo, you need to configure termux and the target repo.
 ### Start the app
 
 To start using the prototype app, run `python <repo_path>/main.py`.
+_Note: make sure that you are inside your python virtual environment._
 
 ### Stop the app
 
 To stop the prototype app, enter `Ctrl + C` in Termux.
+_Note: you can exit your python virtual environment if desired._
