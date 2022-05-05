@@ -77,9 +77,11 @@ To push changes to a repo, you need to configure termux and the target repo.
 ### Start the app
 
 To start using the prototype app, run `python <repo_path>/main.py`.
+
 _Note: make sure that you are inside your python virtual environment._
 
 ### Stop the app
 
 To stop the prototype app, enter `Ctrl + C` in Termux.
+
 _Note: you can exit your python virtual environment if desired._
