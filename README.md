@@ -9,6 +9,7 @@ The concept can be extended to any street art, making you become a real hunter.
 ## Table of Contents
 
 **[Installation](#installation)**
+
 **[Usage](#usage)**
 
 ## Installation
