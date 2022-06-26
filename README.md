@@ -1,8 +1,15 @@
 # flash-invaders-oracle
 
+## Introduction
+
 This app is a modified version of the original and awesome [Flash Invaders](https://space-invaders.com/flashinvaders/), making it easier to find ALL hidden mosaics.
 
 The concept can be extended to any street art, making you become a real hunter.
+
+## Table of Contents
+
+**[Installation](#installation)**
+**[Usage](#usage)**
 
 ## Installation
 
@@ -15,7 +22,7 @@ The prototype version of the app is aimed at being used with [Termux](https://gi
 * Open the Termux app on Android
   * run `apt update`
   * run `apt upgrade`
-  * if issues: run `apt purge game-repo -y` or `apt remove science-repo game-repo`
+  * if issues during update: run `apt purge game-repo -y` or `apt remove science-repo game-repo`
 * Get the pkg upgrades from the terminal:   
   * run `pkg update`
   * run `pkg upgrade`
@@ -42,7 +49,7 @@ The prototype version of the app is aimed at being used with [Termux](https://gi
 * In terminal, run `cd <project_path>` where `<project_path>` is `/storage/emulated/0/Python/projects`
 * In terminal, run `git clone git@github.com:achille-martin/<repo_name>.git`
 
-### Setup Termux APIs (for access to Android tools and functionalities)
+### Setup Termux APIs (access to Android tools and functionalities)
 
 * Install the [Termux:API app from Github](https://github.com/termux/termux-api/releases) -> download and install the .apk
 * In terminal, run `pkg install termux-api` to enable the api calls
@@ -79,10 +86,12 @@ To push changes to a repo, you need to configure termux and the target repo.
 
 To start using the prototype app, run `python <repo_path>/main.py`.
 
-_Note: make sure that you are inside your python virtual environment._
+_Note: make sure that you are inside your python virtual environment.
+Please refer to [Setup python environment](#setup-python-environment) for venv activation._
 
 ### Stop the app
 
 To stop the prototype app, enter `Ctrl + C` in Termux.
 
-_Note: you can exit your python virtual environment if desired._
+_Note: you can exit your python virtual environment if desired.
+Please refer to [Setup python environment](#setup-python-environment) for venv deactivation._
