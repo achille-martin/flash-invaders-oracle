@@ -110,34 +110,45 @@ def generateProximityScale(size, min_d, max_d):
     return proximity_scale_list
 
 def getCurrentLocation():
+    
     logger.debug('Main::getCurrentLocation - entering function...')
-    gps_connection_attempt = 0
-    while gps_connection_attempt < gps_connection_max_attempt:
+    
+    # Initialising gps connection attempts
+    gps_connection_attempt = 1
+        
+    while gps_connection_attempt <= gps_connection_max_attempt:
+            
         try:
+                
             logger.debug('Main::getCurrentLocation - listening to android events via termux API')
             event = termux.API.location('gps', 'once')
+                
             if event:
-                logger.debug('Main::getCurrentLocation - collected android event at attempt ' 
+                logger.debug('Main::getCurrentLocation - collected android event at attempt '
                              + str(gps_connection_attempt)
                              + ' out of ' 
                              + str(gps_connection_max_attempt))
                 break
+                
             else:
-                gps_connection_attempt+=1
                 logger.warning('Main::getCurrentLocation - could not collect android event. Connection attempt ' 
                             + str(gps_connection_attempt)
                             + ' of '
                             + str(gps_connection_max_attempt))
+                gps_connection_attempt+=1
+
         except Exception as e:
-            gps_connection_attempt+=1
             logger.warning('Main::getCurrentLocation - Exception caught while trying to connect to the gps. Connection attempt ' 
                         + str(gps_connection_attempt) 
                         + ' of ' 
                         + str(gps_connection_max_attempt))
-    if gps_connection_attempt == gps_connection_max_attempt:
+            gps_connection_attempt+=1
+        
+    if gps_connection_attempt >= gps_connection_max_attempt:
         logger.exception('Main::getCurrentLocation - Connection to gps failed. \
-                         Exception has been caught: Max number or retries to connect to GPS exceeded.')
-        raise Exception('Max number of retries to connect to GPS exceeded.')
+            Exception has been caught: Max number or retries to connect to GPS exceeded.')
+        raise Exception('Max number of retries to connect to GPS exceeded.')      
+        
     if event:
         logger.debug('Main::getCurrentLocation - the content of the event is = ' + str(event))
         event_data=event[1]
@@ -145,8 +156,11 @@ def getCurrentLocation():
         longitude = event_data.get('longitude')
         logger.debug('Main::getCurrentLocation - the latitude collected (in dd) is = ' + str(latitude))
         logger.debug('Main::getCurrentLocation - the longitude collected (in dd) is = ' + str(longitude))
+    
+    current_location = [latitude, longitude]
     logger.debug('Main::getCurrentLocation - ...exiting function')
-    return [latitude, longitude]
+    
+    return current_location
 
 def calculateDistanceToTarget(origin, target):
     logger.debug('Main::calculateDistanceToTarget - entering function...')
