@@ -14,8 +14,9 @@ try:
     import termux
 except Exception as e:
     raise Exception('An error occured while importing the third-party packages, please import the packages with requirements.txt')
-    
+
 def setUserParams():
+    
     global gpx_file_path, \
            proximity_scale_size, \
            min_distance_to_target, \
@@ -25,6 +26,7 @@ def setUserParams():
            gps_connection_max_attempt, \
            project_path, \
            logging_level_user
+    
     project_path = '/storage/emulated/0/Python/projects/flash-invaders-oracle/'
     gpx_file_path = project_path + 'resources/space_invaders_demo_paris.gpx'
     proximity_scale_size = 10 # number of points on the proximity scale
@@ -32,18 +34,24 @@ def setUserParams():
     max_distance_to_target = 1000 # max detectable distance (in m) to target
     proximity_cut_off_percentage = 25 # display waypoints whose distances are within the lowest x%
     position_update_period = 10.0 # refresh position every x seconds
-    gps_connection_max_attempt = 5 # Max number of attempts to connect to the GPS 
-    logging_level_user = 'INFO'
+    gps_connection_max_attempt = 5 # max number of attempts to connect to the GPS 
+    logging_level_user = 'INFO' # set debugging level
 
 def main():
     
     logger.debug('Main::main - entering function...')
+    
+    # Collecting gps data of known points from file
     gpx_data = getGpxDataFromFile(gpx_file_path)
+    
+    # Creating waypoint list
     waypoint_list = [] 
     for waypoint in gpx_data.waypoints:
         waypoint_list.append([waypoint.latitude, waypoint.longitude])
     logger.debug('Main::main - the list of waypoints is [lat in dd, lon in dd] = ' + str(waypoint_list))
+    
     proximity_scale_list = generateProximityScale(proximity_scale_size, min_distance_to_target, max_distance_to_target) 
+    
     cut_off_proximity_id = math.ceil(proximity_scale_size*(proximity_cut_off_percentage/100))
     cut_off_proximity_value = proximity_scale_list[cut_off_proximity_id]
     logger.debug('Main::main - the cut-off distance is (in m) = ' + str(cut_off_proximity_value))
@@ -52,6 +60,7 @@ def main():
     while(True):
         
         os.system('clear')
+        
         logger.debug('Main::main - refreshing position every ' + str(position_update_period) + ' s')
         print('Refreshing position every ' + str(position_update_period) + ' s')
         current_location = getCurrentLocation()
@@ -179,7 +188,6 @@ if __name__=="__main__":
     setUserParams()
 
     # Instantiating the logger
-    global logger, project_path, logging_level_user
     logger = log_tool.getLogger(__name__)
     logging_level = logging_level_user
     logger.setLevel(logging_level)
@@ -188,6 +196,7 @@ if __name__=="__main__":
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     logger.info('Main::Entrypoint - User params and logger set')
-    
+    logger.info('Main::Entrypoint - Logger set to = ' + str(logging_level_user))
+
     # Calling the main function
-    main() 
+    main()
