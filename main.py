@@ -179,11 +179,11 @@ def evaluateProximity(ref_list, distance):
     pos = bisect_left(ref_list, distance) 
     logger.debug('Main::evaluateProximity - the index of the closest distance in ref_list is = ' + str(pos))
     if pos == 0: 
-        logger.debug('Main::evaluateProximity - Initial index is closest ...exiting function')
+        logger.debug('Main::evaluateProximity - distance is closer to first index ...exiting function')
         return ref_list[0]
-    if pos == len(ref_list): 
-        logger.debug('Main::evaluateProximity - last index is closest ...exiting function')
-        return ref_list[-1] 
+    if pos == len(ref_list):
+        logger.debug('Main::evaluateProximity - distance is closer to last index ...exiting function')
+        return ref_list[-1]
     dist_before = ref_list[pos - 1]
     dist_after = ref_list[pos] 
     if dist_after - distance <= distance - dist_before: 
