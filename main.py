@@ -59,9 +59,11 @@ def main():
     loop_start_time = time.time()
     logger.debug('Main::main - the main loop start time is = ' + str(loop_start_time))
     
-    # Initialising return dict for threaded functions
+    # Initialising variables for threaded functions
     return_dict_threaded_func = {}
     logger.debug('Main::main - return dict for threaded functions initialised to = ' + str(return_dict_threaded_func))
+    lock_dict_threaded_func = {}
+    logger.debug('Main::main - lock dict for threaded functions initialised to = ' + str(lock_dict_threaded_func))
 
     # Initialising location function variables
     current_location = None
@@ -78,7 +80,7 @@ def main():
         logger.debug('Main::main - refreshing position every ' + str(position_update_period) + ' s')
         print('Refreshing position every ' + str(position_update_period) + ' s')
         
-        current_location = makeThreaded(location_id, location_access_lock, return_dict_threaded_func)(getCurrentLocation)() # non-threaded version is: current_location = getCurrentLocation()
+        current_location = makeThreaded(location_id, lock_dict_threaded_func, return_dict_threaded_func)(getCurrentLocation)() # non-threaded version is: current_location = getCurrentLocation()
         logger.debug('Main::main - the content of return dict for threaded functions is = ' + str(return_dict_threaded_func))
         if location_id in return_dict_threaded_func:
             current_location = return_dict_threaded_func[location_id]
@@ -123,15 +125,23 @@ def main():
 
 # Inspired from https://stackoverflow.com/questions/45895189/python-decorator-with-multithreading#45895455
 # and from https://stackoverflow.com/questions/6893968/how-to-get-the-return-value-from-a-thread-in-python 
-def makeThreaded(return_id=None, thread_lock=threading.Lock(), return_dict={}):
+def makeThreaded(return_id=None, lock_dict={}, return_dict={}):
     
     logger.debug('Main::makeThreaded - entering function...')
-
-    # Setting return id for return dict if required
+    
+    # Creating default lock for no-param calls
+    thread_lock = threading.Lock()
+    
+    # Setting return id for return dict and lock dict if required
     if return_id is not None:
+        logger.debug('Main::makeThreaded - return identifier is = ' + str(return_id))
         if not return_id in return_dict:
             logger.debug('Main::makeThreaded - updating return dict with key return identifier')
             return_dict[return_id]=None
+            logger.debug('Main::makeThreaded - updating lock dict with key return identifier')
+            lock_dict[return_id]=threading.Lock()
+        # Updating thread lock variable for clarity
+        thread_lock=lock_dict[return_id]
     
     def decorator(func):
         def threadWrapper(*args, **kwargs):
@@ -141,20 +151,23 @@ def makeThreaded(return_id=None, thread_lock=threading.Lock(), return_dict={}):
                     ret = func(*args, **kwargs)
                     logger.debug('Main::makeThreaded - ...ending threaded function')
                     logger.debug('Main::makeThreaded - return from threaded function is = ' + str(ret))
+                    logger.debug('Main::makeThreaded - return identifier after threaded function is = ' + str(return_id))
                     
                     if return_id is not None:
                         return_dict[return_id] = ret
-                        logger.debug('Main::makeThreaded - funcWrapper return dict content is = ' + str(return_dict))
+                        logger.debug('Main::makeThreaded - return dict content after threaded function is = ' + str(return_dict))
                     
                     logger.debug('Main::makeThreaded - ...ending function')
             
-            logger.debug('Main::makeThreaded - thread lock state is = ' + str(thread_lock.locked()))
+            logger.debug('Main::makeThreaded - thread lock state before threaded function is = ' + str(thread_lock.locked()))
              
             if not thread_lock.locked():
                 logger.debug('Main::makeThreaded - starting threaded function...')
                 thread = threading.Thread(target=funcWrapper, args=args, kwargs=kwargs)
                 thread.daemon = True
                 thread.start()
+            else:
+                logger.debug('Main::makeThreaded - ...ending function') 
             
             return funcWrapper
         return threadWrapper
