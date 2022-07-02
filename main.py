@@ -1,11 +1,10 @@
 #Default packages
-import pip
-import importlib.util
 from bisect import bisect_left
 import math
 import time
 import os
 import logging as log_tool
+import threading
 
 #Third-party packages
 try:
@@ -55,17 +54,46 @@ def main():
     cut_off_proximity_id = math.ceil(proximity_scale_size*(proximity_cut_off_percentage/100))
     cut_off_proximity_value = proximity_scale_list[cut_off_proximity_id]
     logger.debug('Main::main - the cut-off distance is (in m) = ' + str(cut_off_proximity_value))
-    start_time = time.time()
     
+    # Saving main loop start time to serve as ref for refresh updates
+    loop_start_time = time.time()
+    logger.debug('Main::main - the main loop start time is = ' + str(loop_start_time))
+    
+    # Initialising return dict for threaded functions
+    return_dict_threaded_func = {}
+    logger.debug('Main::main - return dict for threaded functions initialised to = ' + str(return_dict_threaded_func))
+
+    # Initialising location function variables
+    current_location = None
+    logger.debug('Main::main - current location initialised to = ' + str(current_location))
+    location_access_lock = threading.Lock()
+    logger.debug('Main::main - location access lock initialised to = ' + str(location_access_lock.locked()))
+    location_id = "location"
+    logger.debug('Main::main - location identifier initialised to = ' + str(location_id))
+
     while(True):
         
         os.system('clear')
         
         logger.debug('Main::main - refreshing position every ' + str(position_update_period) + ' s')
         print('Refreshing position every ' + str(position_update_period) + ' s')
-        current_location = getCurrentLocation()
-        print('Your current location is (lat in dd, lon in dd): ' + str(current_location))
-    
+        
+        current_location = makeThreaded(location_id, location_access_lock, return_dict_threaded_func)(getCurrentLocation)() # non-threaded version is: current_location = getCurrentLocation()
+        logger.debug('Main::main - the content of return dict for threaded functions is = ' + str(return_dict_threaded_func))
+        if location_id in return_dict_threaded_func:
+            current_location = return_dict_threaded_func[location_id]
+        else:
+            current_location = None
+
+        logger.debug('Main::main - current location is = ' + str(current_location))
+        if current_location is None:
+            print('Your current location has not been determined yet. Please wait.')
+            # Force refresh every 2 seconds until location is collected
+            time.sleep(2)
+            continue
+        else:
+            print('Your current location is (lat in dd, lon in dd): ' + str(current_location))
+
         waypoint_distance_list = []
         for waypoint in waypoint_list:
             waypoint_distance_list.append(calculateDistanceToTarget(current_location, waypoint))
@@ -91,7 +119,46 @@ def main():
         else:
             print('The closest targets are located over ' + str(min_dist) + ' m from you')
 
-        time.sleep(position_update_period - ((time.time() - start_time) % position_update_period)) 
+        time.sleep(position_update_period - ((time.time() - loop_start_time) % position_update_period)) 
+
+# Inspired from https://stackoverflow.com/questions/45895189/python-decorator-with-multithreading#45895455
+# and from https://stackoverflow.com/questions/6893968/how-to-get-the-return-value-from-a-thread-in-python 
+def makeThreaded(return_id=None, thread_lock=threading.Lock(), return_dict={}):
+    
+    logger.debug('Main::makeThreaded - entering function...')
+
+    # Setting return id for return dict if required
+    if return_id is not None:
+        if not return_id in return_dict:
+            logger.debug('Main::makeThreaded - updating return dict with key return identifier')
+            return_dict[return_id]=None
+    
+    def decorator(func):
+        def threadWrapper(*args, **kwargs):
+            def funcWrapper(*args, **kwargs):
+                with thread_lock:
+                    
+                    ret = func(*args, **kwargs)
+                    logger.debug('Main::makeThreaded - ...ending threaded function')
+                    logger.debug('Main::makeThreaded - return from threaded function is = ' + str(ret))
+                    
+                    if return_id is not None:
+                        return_dict[return_id] = ret
+                        logger.debug('Main::makeThreaded - funcWrapper return dict content is = ' + str(return_dict))
+                    
+                    logger.debug('Main::makeThreaded - ...ending function')
+            
+            logger.debug('Main::makeThreaded - thread lock state is = ' + str(thread_lock.locked()))
+             
+            if not thread_lock.locked():
+                logger.debug('Main::makeThreaded - starting threaded function...')
+                thread = threading.Thread(target=funcWrapper, args=args, kwargs=kwargs)
+                thread.daemon = True
+                thread.start()
+            
+            return funcWrapper
+        return threadWrapper
+    return decorator
 
 def getGpxDataFromFile(file_path):
     logger.debug('Main::getGpxDataFromFile - entering function...')
