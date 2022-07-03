@@ -1,0 +1,17 @@
+# This file can be edited by the user
+# It sets essential parameters on app startup
+
+path:
+  project_folder: '/storage/emulated/0/Python/projects/flash-invaders-oracle/'
+  gpx_file_within_project_folder: 'resources/space_invaders_demo_paris.gpx'
+  main_log_file_within_project_folder: 'log/main.log'
+radar:
+  min_distance_to_target: 50 # min detectable distance (in m) to target
+  max_distance_to_target: 1000 # max detectable distance (in m) to target
+  proximity_scale_size: 10 # number of points on the proximity scale
+  proximity_cut_off_percentage: 25 # display waypoints whose distances are within the lowest x%
+location:
+  position_update_period: 10.0 # refresh position every x seconds
+  gps_connection_max_attempt: 5 # Max number of attempts to connect to the GPS
+debug:
+  logging_level: 'INFO'
