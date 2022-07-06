@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="togpx">
+   <metadata />
+   <wpt lat="48.865889" lon="2.37815">
+      <name>Space Invader PA__0290 &amp; PA_0532, 113 rue Oberkampf</name>
+      <desc>name=Space Invader PA__0290 &amp; PA_0532, 113 rue Oberkampf</desc>
+   </wpt>
+   <wpt lat="48.852267" lon="2.339178">
+      <name>Space Invader PA_0046, statue de Danton</name>
+      <desc>name=Space Invader PA_0046, statue de Danton</desc>
+   </wpt>
+   <wpt lat="48.8516" lon="2.37796">
+      <name>Space Invader PA_0047, 4bis passage de la Main d'Or</name>
+      <desc>name=Space Invader PA_0047, 4bis passage de la Main d'Or</desc>
+   </wpt>
+   <wpt lat="48.844321" lon="2.284636">
+      <name>Space Invader PA_0059, 1 rue Lacordaire</name>
+      <desc>name=Space Invader PA_0059, 1 rue Lacordaire</desc>
+   </wpt>
+   <wpt lat="48.875831" lon="2.383608">
+      <name>Space Invader PA_0738, 20 rue Clavel</name>
+      <desc>name=Space Invader PA_0738, 20 rue Clavel</desc>
+   </wpt>
+</gpx>
