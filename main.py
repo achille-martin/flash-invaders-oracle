@@ -4,6 +4,7 @@ import math
 import time
 import os
 import logging as log_tool
+import yaml
 import threading
 
 #Third-party packages
@@ -13,28 +14,6 @@ try:
     import termux
 except Exception as e:
     raise Exception('An error occured while importing the third-party packages, please import the packages with requirements.txt')
-
-def setUserParams():
-    
-    global gpx_file_path, \
-           proximity_scale_size, \
-           min_distance_to_target, \
-           max_distance_to_target, \
-           proximity_cut_off_percentage, \
-           position_update_period, \
-           gps_connection_max_attempt, \
-           project_path, \
-           logging_level_user
-    
-    project_path = '/storage/emulated/0/Python/projects/flash-invaders-oracle/'
-    gpx_file_path = project_path + 'resources/space_invaders_demo_paris.gpx'
-    proximity_scale_size = 10 # number of points on the proximity scale
-    min_distance_to_target = 50 # min detectable distance (in m) to target
-    max_distance_to_target = 1000 # max detectable distance (in m) to target
-    proximity_cut_off_percentage = 25 # display waypoints whose distances are within the lowest x%
-    position_update_period = 10.0 # refresh position every x seconds
-    gps_connection_max_attempt = 5 # max number of attempts to connect to the GPS 
-    logging_level_user = 'INFO' # set debugging level
 
 def main():
     
@@ -278,14 +257,29 @@ def evaluateProximity(ref_list, distance):
 #Entry point
 if __name__=="__main__":
     
+    # Loading the params defined by the user from config file
+    try:
+        with open('config/user_config.yaml', 'r') as config_file:
+            user_config = yaml.safe_load(config_file)
+    except Exception as e:
+        raise Exception(' User params could not be loaded. Please.verify your configuration.')
+
     # Setting the params defined by the user
-    setUserParams()
+    project_folder_path = user_config['path']['project_folder']
+    gpx_file_path = project_folder_path + user_config['path']['gpx_file_within_project_folder']
+    main_log_file_path = project_folder_path + user_config['path']['main_log_file_within_project_folder']
+    min_distance_to_target = user_config['radar']['min_distance_to_target'] 
+    max_distance_to_target = user_config['radar']['max_distance_to_target']
+    proximity_scale_size = user_config['radar']['proximity_scale_size']
+    proximity_cut_off_percentage = user_config['radar']['proximity_cut_off_percentage']
+    position_update_period = user_config['location']['position_update_period']
+    gps_connection_max_attempt = user_config['location']['gps_connection_max_attempt']
+    logging_level = user_config['debug']['logging_level']
 
     # Instantiating the logger
     logger = log_tool.getLogger(__name__)
-    logging_level = logging_level_user
     logger.setLevel(logging_level)
-    file_handler = log_tool.FileHandler(project_path + 'main.log', 'w+')
+    file_handler = log_tool.FileHandler(main_log_file_path, 'w+')
     formatter = log_tool.Formatter('[%(asctime)s][%(levelname)s] - %(message)s')
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
