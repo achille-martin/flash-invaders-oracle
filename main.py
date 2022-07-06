@@ -284,7 +284,7 @@ if __name__=="__main__":
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     logger.info('Main::Entrypoint - User params and logger set')
-    logger.info('Main::Entrypoint - Logger set to = ' + str(logging_level_user))
+    logger.info('Main::Entrypoint - Logger set to = ' + str(logging_level))
 
     # Calling the main function
     main()
